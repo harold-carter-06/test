@@ -34,17 +34,11 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-      - run: npm i --omit=dev
-      - run: npm run build --if-present
+      - name: Installing NPM
+        run: npm install
 
-      - name: 'Upload Artifact'
-        uses: actions/upload-artifact@v3
-        with:
-          name: build-step-output
-          path: |
-            dist/
-            package-lock.json
-          retention-days: 1
+      - name: Building application
+        run: npm run build
 
   deploy:
     runs-on: ubuntu-latest
