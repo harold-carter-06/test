@@ -1,54 +1,77 @@
-name: Deploy to production
- 
+name: developemnt
+
 on:
   push:
     branches:
-      - development
- 
+      - developemnt
+  pull_request:
+    branches:
+      - developemnt
+
 jobs:
-  create-docker-image:
-    name: Build and push the Docker image to ECR
-    runs-on: ubuntu-latest
+  ci:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node: [16]
+    env:
+      NODE_ENV: "development"
+
+
     steps:
-      - name: Check out the repository
-        uses: actions/checkout@v3
- 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1-node16
+      - name: Checkout 🛎
+        uses: actions/checkout@master
+
+      - name: Setup node env 🏗
+        uses: actions/setup-node@v2.1.2
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
- 
-      - name: Log into the Amazon ECR Public
-        id: login-ecr-public
-        uses: aws-actions/amazon-ecr-login@v1
+          node-version: ${{ matrix.node }}
+
+      - name: Cache node_modules 📦
+        uses: actions/cache@v2
         with:
-          registry-type: public
- 
-      - name: Build, tag, and push docker image to Amazon ECR Public
-        env:
-          REGISTRY: ${{ steps.login-ecr-public.outputs.registry }}
-          REGISTRY_ALIAS: e2b3j8w6
-          REPOSITORY: nestjs-api
-          IMAGE_TAG: nestjs-api
-        run: |
-          docker build -t $IMAGE_TAG .
-          docker tag $IMAGE_TAG:latest $REGISTRY/$REGISTRY_ALIAS/$IMAGE_TAG:latest
-          docker push $REGISTRY/$REGISTRY_ALIAS/$REPOSITORY:latest
- 
-  deploy:
-    name: Deploy the new Docker image to ECS
-    runs-on: ubuntu-latest
-    needs: create-docker-image
-    steps:
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1-node16
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Installing NPM
+        run: npm install
+
+      - name: Linting check
+        run: npm run lint
+
+      - name: Building application
+        run: npm run build
+
+      - name: Generate deployment package
+        run: zip -r deploy.zip * .[^.]* -x "**node_modules**"
+
+      - name: Get timestamp
+        uses: gerred/actions/current-time@master
+        id: current-time
+
+      - name: Run string replace
+        uses: frabert/replace-string-action@master
+        id: format-time
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-central-1
- 
-      - name: Update ECS service
-        run: |
-          aws ecs update-service --cluster nest_cluster --service nestjs_service --task-definition nest_task --force-new-deployment
+          pattern: '[:\.]+'
+          string: "${{ steps.current-time.outputs.time }}"
+          replace-with: '-'
+          flags: 'g'
+
+      - name: Beanstalk Deploy for app
+        uses: einaregilsson/beanstalk-deploy@v16
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: application_name
+          environment_name: environment_name
+          region: ${{ env.AWS_REGION }}
+          version_label: "e-learn-${{ steps.format-time.outputs.replaced }}"
+          deployment_package: deploy.zip
+
+      - name: Deployed!
+        run: echo App deployed to ELB
