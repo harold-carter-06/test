@@ -52,11 +52,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Download build step artifacts
-        uses: actions/download-artifact@v3
-        with:
-          name: build-step-output
-
       - name: Generate deployment package
         run: zip deploy.zip -r src dist package.json package-lock.json Dockerfile tsconfig.json tsconfig.build.json
 
