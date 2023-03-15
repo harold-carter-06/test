@@ -1,12 +1,12 @@
-name: developemnt
+name: development
 
 on:
   push:
     branches:
-      - developemnt
+      - development
   pull_request:
     branches:
-      - developemnt
+      - development
 
 jobs:
   ci:
@@ -16,9 +16,6 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         node: [16]
-    env:
-      NODE_ENV: "development"
-
 
     steps:
       - name: Checkout 🛎
