@@ -45,22 +45,14 @@ jobs:
         uses: actions/setup-python@v1
         with:
           python-version: "3.6"
-      - name: Configure AWS credentials 
-        uses: aws-actions/configure-aws-credentials@v1
+      - name: Deploy to Beanstalk
+        uses: einaregilsson/beanstalk-deploy@v16
         with:
-          aws-id: ${{ secrets.AWS_ID }}
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
-      - run: |
-          AWS_VERSION_LABEL=${{env.APP_NAME}}-${{env.PIPELINE_ID}}
-
-          echo "Installing Elastic Beanstalk Cli"
-          python -m pip install --upgrade pip
-          pip install awsebcli --upgrade
-          eb --version
-
-          echo "Deploy init"
-          eb init -i ${{env.APP_NAME}} -p ${{env.AWS_PLATFORM}} -k ${{secrets.AWS_ID}} --region ${{env.AWS_REGION}}
-          eb deploy ${{env.APP_NAME}} --version ${AWS_VERSION_LABEL}
-          echo "Deploy finished"
+          args: --acl public-read --delete
+        env:
+          AWS_S3_BUCKET: my-awesome-app-bucket
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          SOURCE_DIR: "dist"
+          CI: false
