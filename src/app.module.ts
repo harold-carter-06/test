@@ -14,32 +14,32 @@ import { SongSingerModule } from './adminPanel/song-singer/song-singer.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    MongooseModule.forRoot(process.env.DB_URL),
-    UserModule,
-    CategoryModule,
-    SongModule,
-    SingerModule,
-    AlbumModule,
-    AdminModule,
-    SongSingerModule,
+    // MongooseModule.forRoot(process.env.DB_URL),
+    // UserModule,
+    // CategoryModule,
+    // SongModule,
+    // SingerModule,
+    // AlbumModule,
+    // AdminModule,
+    // SongSingerModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(AuthMiddleware)
-      .exclude(
-        "/admin/login",
-        "/user/singup",
-        "/user/login",
-        "/user/verify/otp",
-        "/song/add",
-        "/category/add",
-        "/user/google/login",
-        "/"
-      )
-      .forRoutes("/");
-  }
+  // configure(consumer: MiddlewareConsumer) {
+  //   consumer
+  //     .apply(AuthMiddleware)
+  //     .exclude(
+  //       "/admin/login",
+  //       "/user/singup",
+  //       "/user/login",
+  //       "/user/verify/otp",
+  //       "/song/add",
+  //       "/category/add",
+  //       "/user/google/login",
+  //       "/"
+  //     )
+  //     .forRoutes("/");
+  // }
 }
