@@ -33,5 +33,4 @@ jobs:
           environment_name: nest-test-new
           version_label: ${{ github.sha }}
           region: ${{ secrets.AWS_REGION }}
-          deployment_package: deploy.zip
           use_existing_version_if_available: true
