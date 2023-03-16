@@ -4,7 +4,7 @@ env:
   APP_NAME: new-spotify
   S3_BUCKET: elasticbeanstalk-us-east-1-332238017960
   AWS_REGION: ${{ secrets.AWS_REGION }}
-  AWS_PLATFORM: Docker
+  AWS_PLATFORM: Node.js
   PIPELINE_ID: ${GITHUB_RUN_ID}-${GITHUB_RUN_NUMBER}
   AWS_ID: "332238017960"
 
