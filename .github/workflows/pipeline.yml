@@ -48,6 +48,9 @@ jobs:
 
       - name: Building application
         run: npm run build
+      - name: Generate deployment package
+        run: zip deploy.zip -r src dist package.json package-lock.json Dockerfile tsconfig.json tsconfig.build.json
+
       - name: Configure AWS credentials 
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -55,15 +58,3 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
-      - run: |
-          AWS_VERSION_LABEL=${{env.APP_NAME}}-${{env.PIPELINE_ID}}
-
-          echo "Installing Elastic Beanstalk Cli"
-          python -m pip install --upgrade pip
-          pip install awsebcli --upgrade
-          eb --version
-
-          echo "Deploy init"
-          eb init -i ${{env.APP_NAME}} -p ${{env.AWS_PLATFORM}} -k ${{secrets.AWS_ID}} --region ${{env.AWS_REGION}}
-          eb deploy ${{env.APP_NAME}} --version ${AWS_VERSION_LABEL}
-          echo "Deploy finished"
