@@ -2,7 +2,7 @@ name: Deploy Node app on AWS Elastic Beanstalk
 
 env:
   APP_NAME: new-spotify
-  S3_BUCKET: Newspotify-env
+  S3_BUCKET: elasticbeanstalk-us-east-1-332238017960
   AWS_REGION: ${{ secrets.AWS_REGION }}
   AWS_PLATFORM: Docker
   PIPELINE_ID: ${GITHUB_RUN_ID}-${GITHUB_RUN_NUMBER}
@@ -25,7 +25,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
       - run: |
-          AWS_VERSION_LABEL=spotify-demo-source
+          AWS_VERSION_LABEL=${{env.APP_NAME}}-${{env.PIPELINE_ID}}
 
           echo "Creating Source Bundle"
           zip -r ${{env.APP_NAME}}.zip app.js Dockerfile dockerignore package.json
