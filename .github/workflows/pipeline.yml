@@ -28,7 +28,7 @@ jobs:
           AWS_VERSION_LABEL=${{env.APP_NAME}}-${{env.PIPELINE_ID}}
 
           echo "Creating Source Bundle"
-          zip -r ${{env.APP_NAME}}.zip src dist package.json package-lock.json Dockerfile tsconfig.json tsconfig.build.json
+          zip -r ${{env.APP_NAME}}.zip dist
           S3_KEY="$AWS_VERSION_LABEL.zip"
 
           echo "Uploading Source Bundle to S3"
