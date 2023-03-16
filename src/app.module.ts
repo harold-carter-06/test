@@ -37,7 +37,8 @@ export class AppModule {
         "/user/verify/otp",
         "/song/add",
         "/category/add",
-        "/user/google/login"
+        "/user/google/login",
+        "/"
       )
       .forRoutes("/");
   }
