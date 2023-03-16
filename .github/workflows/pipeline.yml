@@ -34,7 +34,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-      - run: npm i --omit=dev
+      - run: npm i
       - run: npm run build
 
       - name: 'Upload Artifact'
@@ -64,16 +64,16 @@ jobs:
           name: build-step-output
 
       - name: Generate deployment package
-        run: zip deploy.zip -r src dist package.json package-lock.json tsconfig.json tsconfig.build.json api-gateway .platform
+        run: zip deploy.zip -r src dist package.json package-lock.json docker-compose.yml Dockerfile-Local tsconfig.json tsconfig.build.json api-gateway .platform
 
       - name: Deploy to EB
         uses: einaregilsson/beanstalk-deploy@v20
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: nest-test
-          environment_name: nest-test-new
-          version_label: nest-test-v0
+          application_name: spotify-demo
+          environment_name: Spotifydemo-env
+          version_label: ${{ github.sha }}
           region: ${{ secrets.AWS_REGION }}
           deployment_package: deploy.zip
           use_existing_version_if_available: true
