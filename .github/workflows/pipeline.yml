@@ -20,11 +20,6 @@ jobs:
     permissions:
       id-token: write # required to use OIDC authentication
       contents: read # required to checkout the code from the repo
-    
-    strategy:
-      matrix:
-        node-version: [16.x]
-
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -48,6 +43,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest # the operating system your job should run on
+    needs: [build]
     steps:
       - name: Checkout Latest Repo
         # checks out your repository under the GitHub workspace so that your workflow can access it
