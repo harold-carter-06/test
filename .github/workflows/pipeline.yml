@@ -70,14 +70,14 @@ jobs:
       - name: Deploy to EB
         uses: einaregilsson/beanstalk-deploy@v21
         with:
-         #  input the credentials you used to setup AWS CLI and credentials for the application environment
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           application_name: new-spotify
           environment_name: Newspotify-env
+          region: ${{ secrets.AWS_REGION }}
           version_label: "spotify-demo-v0"
-          region: us-west-2
           deployment_package: deploy.zip
+          use_existing_version_if_available: true
 
       - name: Deployed!
         run: echo App deployed to ELB
