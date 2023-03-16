@@ -45,7 +45,7 @@ jobs:
         application_name: "nest-test"
         environment_name: "nest-test-new"
         region: ${{ secrets.AWS_REGION }}
-        version_label: "nest-test-${{ steps.format-time.outputs.replaced }}"
+        version_label: "nest-test-v0"
         deployment_package: deploy.zip
         use_existing_version_if_available: true
 
