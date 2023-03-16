@@ -48,9 +48,6 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest # the operating system your job should run on
-    strategy:
-      matrix:
-        node-version: [16.x]
     steps:
       - name: Checkout Latest Repo
         # checks out your repository under the GitHub workspace so that your workflow can access it
@@ -82,7 +79,7 @@ jobs:
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           application_name: new-spotify
           environment_name: Newspotify-env
-          version_label: "new-spotify-${{ steps.format-time.outputs.replaced }}"
+          version_label: "spotify-demo-source"
           region: us-west-2
           deployment_package: deploy.zip
 
