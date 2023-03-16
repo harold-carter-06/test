@@ -27,11 +27,11 @@ jobs:
       - name: Deploy to Beanstalk
         uses: einaregilsson/beanstalk-deploy@v16
         with:
-          args: --acl public-read --delete
-        env:
-          AWS_S3_BUCKET: elasticbeanstalk-us-east-1-332238017960
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY:  ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          application_name: nest-test
+          environment_name: nest-test-new
+          version_label: ${{ github.sha }}
           region: ${{ secrets.AWS_REGION }}
-          SOURCE_DIR: "dist"
-          CI: false
+          deployment_package: deploy.zip
+          use_existing_version_if_available: true
