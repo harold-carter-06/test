@@ -1,36 +1,52 @@
-name: development Build
+name:  Development Build
+
 on:
   push:
-    branches:
-      - development
+    branches: [ development ]
+  pull_request:
+    branches: [ development ]
+    
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment: development
-
     strategy:
       matrix:
         node-version: [16.x]
 
     steps:
-      - uses: actions/checkout@v1
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}
-      - name: NPM Install
-        run: |
-          npm install --force
-      - name: development Build
-        run: |
-          npm run build
-      - name: Deploy to Beanstalk
-        uses: einaregilsson/beanstalk-deploy@v16
-        with:
-          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          application_name: nest-test
-          environment_name: nest-test-new
-          version_label: ${{ github.sha }}
-          region: ${{ secrets.AWS_REGION }}
-          use_existing_version_if_available: true
+    - uses: actions/checkout@v2
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Generate deployment package
+      run: zip -r deploy.zip * -x "**node_modules**"
+
+    - name: Get timestamp
+      uses: gerred/actions/current-time@master
+      id: current-time
+
+    - name: Run string replace
+      uses: frabert/replace-string-action@master
+      id: format-time
+      with:
+        pattern: '[:\.]+'
+        string: "${{ steps.current-time.outputs.time }}"
+        replace-with: '-'
+        flags: 'g'
+
+    - name: Beanstalk Deploy for app
+      uses: einaregilsson/beanstalk-deploy@v10
+      with:
+        aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        application_name: "nest-test"
+        environment_name: "nest-test-new"
+        region: ${{ secrets.AWS_REGION }}
+        deployment_package: deploy.zip
+        use_existing_version_if_available: true
+
+    - name: Deployed!
+      run: echo App deployed to ELB
