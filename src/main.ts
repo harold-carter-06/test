@@ -5,6 +5,7 @@ import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const port=process.env.PORT || 3000;
   console.log( 'data11111');
   app.useGlobalPipes(new ValidationPipe());
   const config = new DocumentBuilder()
@@ -25,7 +26,7 @@ async function bootstrap() {
       operationsSorter: 'alpha',
     },
   });
-  await app.listen(process.env.PORT);
-  console.log("server run on :: localhost:"+process.env.PORT+"/docs")
+  await app.listen(port);
+  console.log("server run on :: localhost:"+port+"/docs")
 }
 bootstrap();
