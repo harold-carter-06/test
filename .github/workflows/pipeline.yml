@@ -64,6 +64,7 @@ jobs:
       - name: Beanstalk Deploy for app
         uses: einaregilsson/beanstalk-deploy@v16
         with:
+          aws_bucket: elasticbeanstalk-us-east-1-332238017960
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           application_name: new-spotify
