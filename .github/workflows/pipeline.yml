@@ -75,7 +75,7 @@ jobs:
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           application_name: new-spotify
           environment_name: Newspotify-env
-          version_label: "spotify-demo-source"
+          version_label: "spotify-demo-v0"
           region: us-west-2
           deployment_package: deploy.zip
 
