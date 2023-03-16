@@ -37,7 +37,7 @@ jobs:
       #   run: npm run lint
 
       - name: Building application
-        run: npm build
+        run: npm run build
 
       - name: Generate deployment package
         run: zip -r ${{env.APP_NAME}}.zip dist Dockerfile dockerignore package.json
