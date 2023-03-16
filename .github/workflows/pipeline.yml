@@ -59,7 +59,8 @@ jobs:
           AWS_VERSION_LABEL=${{env.APP_NAME}}-${{env.PIPELINE_ID}}
 
           echo "Installing Elastic Beanstalk Cli"
-          npm i eb-cli
+          python -m pip install --upgrade pip
+          pip install awsebcli --upgrade
           eb --version
 
           echo "Deploy init"
