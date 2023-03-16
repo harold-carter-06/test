@@ -48,8 +48,9 @@ jobs:
 
       - name: Building application
         run: npm run build
+
       - name: Generate deployment package
-        run: zip deploy.zip -r src dist package.json package-lock.json Dockerfile tsconfig.json tsconfig.build.json
+        run: zip deploy.zip -r dist
 
       - name: Configure AWS credentials 
         uses: aws-actions/configure-aws-credentials@v1

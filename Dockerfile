@@ -1,19 +1,14 @@
 FROM node:16
-
-# Create app directory
+RUN mkdir /usr/src/app
 WORKDIR /usr/src/app
 
-# A wildcard is used to ensure both package.json AND package-lock.json are copied
-COPY package*.json ./
+ADD ./package.json                                            /usr/src/app/package.json
+ADD ./tsconfig.json                                           /usr/src/app/tsconfig.json
+ADD ./tsconfig.build.json                                     /usr/src/app/tsconfig.build.json
+ADD ./src                                                     /usr/src/app/src
 
-# Install app dependencies
-RUN npm install
-
-# Bundle app source
-COPY . .
-
-# Creates a "dist" folder with the production build
+RUN cd ~
+RUN npm i --omit=dev
 RUN npm run build
 
-# Start the server using the production build
-CMD [ "node", "dist/main.js" ]
+CMD npm run start:prod
