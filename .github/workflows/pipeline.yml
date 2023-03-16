@@ -57,6 +57,11 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
       - run: |
           AWS_VERSION_LABEL=${{env.APP_NAME}}-${{env.PIPELINE_ID}}
+
+          echo "Installing Elastic Beanstalk Cli"
+          npm install awsebcli --upgrade
+          eb --version
+
           echo "Deploy init"
           eb init -i ${{env.APP_NAME}} -p ${{env.AWS_PLATFORM}} -k ${{secrets.AWS_ID}} --region ${{env.AWS_REGION}}
           eb deploy ${{env.APP_NAME}} --version ${AWS_VERSION_LABEL}
