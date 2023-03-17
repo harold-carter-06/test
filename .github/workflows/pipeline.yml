@@ -66,6 +66,7 @@ jobs:
       - name: Generate deployment package
         run: zip deploy.zip -r src dist package.json package-lock.json docker-compose.yml Dockerfile-Local tsconfig.json tsconfig.build.json api-gateway .platform
 
+
       - name: Deploy to EB
         uses: einaregilsson/beanstalk-deploy@v20
         with:
