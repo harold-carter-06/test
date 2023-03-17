@@ -26,7 +26,7 @@ async function bootstrap() {
       operationsSorter: 'alpha',
     },
   });
-  await app.listen(port);
-  console.log("server run on :: localhost:"+port+"/docs")
+  await app.listen(8080);
+  console.log("server run on :: localhost:"+8080+"/docs")
 }
 bootstrap();
