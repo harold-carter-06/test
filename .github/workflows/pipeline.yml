@@ -1,40 +1,65 @@
-name: Deploy to AWS Beanstalk
+name: Deploy Node app on AWS Elastic Beanstalk
+
 env:
-  APP_NAME: brill-api-env
+  APP_NAME: brill-api
+  S3_BUCKET: brill-api-source
+  AWS_REGION: us-east-1
+  AWS_PLATFORM: node.js
   PIPELINE_ID: ${GITHUB_RUN_ID}-${GITHUB_RUN_NUMBER}
+
 on:
   push:
-    branches:
-      - development
+    branches: [ development ]
 
 jobs:
-  deploy:
+  create_eb_version:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Configure AWS credentials
+      - uses: actions/checkout@v2
+      - name: Configure AWS credentials 
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
+          aws-region: ${{ env.AWS_REGION }}
       - run: |
           AWS_VERSION_LABEL=${{env.APP_NAME}}-${{env.PIPELINE_ID}}
-          sudo apt-get update
-          sudo apt-get install python3-pip
-          sudo pip3 install awsebcli
 
-          mkdir -p ~/.aws/eb-cli/containers
-          chmod 700 ~/.aws/eb-cli/containers
-          cat <<EOF > ~/.aws/eb-cli/containers/nestjs.config.yml
-          branch-defaults:
-            development:
-              environment: brill-api-env
-              group_suffix: -brill-api-env
-          EOF
-          eb init --platform node.js --region us-east-1
-          eb use brill-api-env
-          eb deploy ${{env.APP_NAME}} --version brill-api-source
+          echo "Creating Source Bundle"
+          zip -r ${{env.APP_NAME}}.zip app.js Dockerfile dockerignore package.json
+          S3_KEY="$AWS_VERSION_LABEL.zip"
 
+          echo "Uploading Source Bundle to S3"
+          aws s3 cp ${{env.APP_NAME}}.zip s3://${{env.S3_BUCKET}}/${S3_KEY} --region ${{env.AWS_REGION}}
+
+          echo "Creating Elastic Beanstalk version"
+          aws elasticbeanstalk create-application-version --application-name ${{env.APP_NAME}} --version-label $AWS_VERSION_LABEL --region ${{env.AWS_REGION}} --source-bundle S3Bucket=${{env.S3_BUCKET}},S3Key=${S3_KEY} --auto-create-application
+
+  deploy_aws:
+    needs: [create_eb_version]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.6 (needed for eb cli)
+        uses: actions/setup-python@v1
+        with:
+          python-version: "3.6"
+      - name: Configure AWS credentials 
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-id: ${{ secrets.AWS_ID }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+      - run: |
+          AWS_VERSION_LABEL=${{env.APP_NAME}}-${{env.PIPELINE_ID}}
+
+          echo "Installing Elastic Beanstalk Cli"
+          python -m pip install --upgrade pip
+          pip install awsebcli --upgrade
+          eb --version
+
+          echo "Deploy init"
+          eb init -i ${{env.APP_NAME}} -p ${{env.AWS_PLATFORM}} -k ${{secrets.AWS_ID}} --region ${{env.AWS_REGION}}
+          eb deploy ${{env.APP_NAME}} --version ${AWS_VERSION_LABEL}
+          echo "Deploy finished"
