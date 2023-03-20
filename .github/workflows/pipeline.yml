@@ -1,5 +1,7 @@
 name: Deploy to AWS Beanstalk
-
+env:
+  APP_NAME: brill-api
+  PIPELINE_ID: ${GITHUB_RUN_ID}-${GITHUB_RUN_NUMBER}
 on:
   push:
     branches:
@@ -18,7 +20,8 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
-
+      - run: |
+          AWS_VERSION_LABEL=${{env.APP_NAME}}-${{env.PIPELINE_ID}}
       - name: Install Elastic Beanstalk CLI
         run: |
           sudo apt-get update
@@ -37,5 +40,5 @@ jobs:
           EOF
           eb init --platform node.js --region us-east-1
           eb use brill-api-env
-          eb deploy --staged --verbose --label brill-api-source --region us-east-1
+          eb deploy ${{env.APP_NAME}} --version ${AWS_VERSION_LABEL}
 
