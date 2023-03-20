@@ -36,5 +36,5 @@ jobs:
           EOF
           eb init --platform node.js --region us-east-1
           eb use brill-api-env
-          eb deploy ${{env.APP_NAME}} --version ${AWS_VERSION_LABEL}
+          eb deploy ${{env.APP_NAME}} --version brill-api-source
 
