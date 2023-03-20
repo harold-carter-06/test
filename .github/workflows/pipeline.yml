@@ -3,7 +3,7 @@ name: Deploy to AWS Beanstalk
 on:
   push:
     branches:
-      - hitesh-dev
+      - development
 
 jobs:
   deploy:
@@ -38,7 +38,7 @@ jobs:
           chmod 700 ~/.aws/eb-cli/containers
           cat <<EOF > ~/.aws/eb-cli/containers/nestjs.config.yml
           branch-defaults:
-            hitesh-dev:
+            development:
               environment: brill-api-env
               group_suffix: -brill-api-env
           EOF
