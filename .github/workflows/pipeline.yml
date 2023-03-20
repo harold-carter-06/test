@@ -8,9 +8,6 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    env:
-      AWS_REGION: us-east-1
-      AWS_EB_FORCE_INTERACTIVE: false
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -20,7 +17,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.AWS_REGION }}
+          aws-region: us-east-1
 
       - name: Install Elastic Beanstalk CLI
         run: |
@@ -38,7 +35,7 @@ jobs:
               environment: brill-api-env
               group_suffix: -brill-api-env
           EOF
-          eb init --platform node.js --region ${{ env.AWS_REGION }}
+          eb init --platform node.js --region us-east-1
           eb use brill-api-env
-          eb deploy --staged --verbose --label brill-api-source --region ${{ env.AWS_REGION }}
+          eb deploy --staged --verbose --label brill-api-source --region us-east-1
 
