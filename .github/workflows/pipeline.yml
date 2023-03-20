@@ -37,4 +37,4 @@ jobs:
           EOF
           eb init --platform node.js --region us-east-1
           eb use brill-api-env
-          eb deploy --staged --verbose --label app-${{ github.run_id }}-production --region ${{ env.AWS_REGION }}
+          eb deploy --staged --verbose --label  brill-api-source --region ${{ env.AWS_REGION }}
