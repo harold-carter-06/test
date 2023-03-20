@@ -36,5 +36,5 @@ jobs:
               group_suffix: -brill-api-env
           EOF
           eb init --platform node.js --region us-east-1
-           eb use brill-api-env
-          eb deploy --staged --verbose
+          eb use brill-api-env
+          eb deploy --staged --verbose --label brill-api-source --region us-east-1
