@@ -1,6 +1,6 @@
 name: Deploy to AWS Beanstalk
 env:
-  APP_NAME: brill-api
+  APP_NAME: brill-api-env
   PIPELINE_ID: ${GITHUB_RUN_ID}-${GITHUB_RUN_NUMBER}
 on:
   push:
