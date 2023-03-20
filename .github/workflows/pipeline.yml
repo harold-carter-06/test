@@ -32,8 +32,8 @@ jobs:
           cat <<EOF > ~/.aws/eb-cli/containers/nestjs.config.yml
           branch-defaults:
             development:
-              environment: brill-api-env
-              group_suffix: -brill-api-env
+              environment:
+                NODE_ENV: development
           EOF
           eb init --platform node.js --region us-east-1
           eb use brill-api-env
