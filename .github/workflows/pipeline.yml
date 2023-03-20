@@ -28,10 +28,6 @@ jobs:
           sudo apt-get install python3-pip
           sudo pip3 install awsebcli
 
-      - name: Create S3 Bucket
-        run: |
-          aws s3api create-bucket --bucket my-bucket-name --region ${{ env.AWS_REGION }} --create-bucket-configuration LocationConstraint=${{ env.AWS_REGION }}
-
       - name: Deploy to AWS Elastic Beanstalk
         run: |
           mkdir -p ~/.aws/eb-cli/containers
