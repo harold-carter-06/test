@@ -62,5 +62,6 @@ jobs:
 
           echo "Deploy init"
           eb init --platform node.js --region us-east-1
+          eb use brill-api-env
           eb deploy --staged --verbose --label brill-api-source --region us-east-1
           echo "Deploy finished"
