@@ -22,14 +22,10 @@ jobs:
           aws-region: us-east-1
       - run: |
           AWS_VERSION_LABEL=${{env.APP_NAME}}-${{env.PIPELINE_ID}}
-      - name: Install Elastic Beanstalk CLI
-        run: |
           sudo apt-get update
           sudo apt-get install python3-pip
           sudo pip3 install awsebcli
 
-      - name: Deploy to AWS Elastic Beanstalk
-        run: |
           mkdir -p ~/.aws/eb-cli/containers
           chmod 700 ~/.aws/eb-cli/containers
           cat <<EOF > ~/.aws/eb-cli/containers/nestjs.config.yml
